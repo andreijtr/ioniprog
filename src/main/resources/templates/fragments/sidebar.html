@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Title</title>
+</head>
+<body>
+<aside th:fragment="sidebar" class="main-sidebar sidebar-dark-primary elevation-4">
+    <a href="index3.html" class="brand-link">
+        <img src="/images/logo-tooth.png" alt="-" class="brand-image img-circle elevation-4" style="opacity: .5">
+        <span class="brand-text font-weight-light">ioniprog</span>
+    </a>
+    <div class="sidebar">
+        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+            <div class="info userNames">
+                <a href="#" class="d-block">User info</a>
+            </div>
+        </div>
+        <nav class="mt-2">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <i class="fa fa-fw fa-calendar"></i>
+                        <span>Programari</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="#" onclick="loadFragment('/patient')">
+                        <i class="fas fa-fw fa-user-friends"></i>
+                        <span>Pacienti</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="#">
+                        <i class="fas fa-fw fa-map-marker-alt"></i>
+                        <span>Cabinete</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <i class="fas fa-fw fa-folder-open"></i>
+                        <span>Manopere</span></a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <script th:src="@{~/script/javascript/sidebar.js}"></script>
+</aside>
+</body>
+</html>

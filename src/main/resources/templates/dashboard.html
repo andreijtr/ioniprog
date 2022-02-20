@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-header" th:value="${_csrf.headerName}">
+    <meta name="csrf-token" th:value="${_csrf.token}">
+    <title>ioniprog</title>
+
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" th:href="@{~/admin-lte/plugins/fontawesome-free/css/all.min.css}">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <!-- Tempusdominus Bootstrap 4 -->
+    <link rel="stylesheet" th:href="@{~/admin-lte/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}">
+    <!-- Daterange picker -->
+<!--    <link rel="stylesheet" th:href="@{~/admin-lte/plugins/daterangepicker/daterangepicker.css}">-->
+    <!-- Theme style -->
+    <link rel="stylesheet" th:href="@{~/admin-lte/dist/css/adminlte.min.css}">
+    <!-- summernote -->
+<!--    <link rel="stylesheet" th:href="@{~/admin-lte/plugins/summernote/summernote-bs4.min.css}">-->
+    <!-- jQuery -->
+    <script th:src="@{~/admin-lte/plugins/jquery/jquery.min.js}"></script>
+    <!-- jQuery UI 1.11.4 -->
+    <script th:src="@{~/admin-lte/plugins/jquery-ui/jquery-ui.min.js}"></script>
+    <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+    <script>
+        $.widget.bridge('uibutton', $.ui.button)
+    </script>
+    <!-- Bootstrap 4 -->
+    <script th:src="@{~/admin-lte/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <!-- daterangepicker -->
+    <script th:src="@{~/admin-lte/plugins/moment/moment.min.js}"></script>
+    <script th:src="@{~/admin-lte/plugins/moment/moment-with-locales.js}"></script>
+<!--    <script th:src="@{~/admin-lte/plugins/daterangepicker/daterangepicker.js}"></script>-->
+    <!-- AdminLTE App -->
+    <script th:src="@{~/admin-lte/dist/js/adminlte.js}"></script>
+    <!-- AdminLTE for demo purposes -->
+<!--    <script th:src="@{~/admin-lte/dist/js/demo.js}"></script>-->
+    <!-- Tempusdominus Bootstrap 4 -->
+    <script th:src="@{~/admin-lte/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js}"></script>
+    <!-- Summernote -->
+<!--    <script th:src="@{~/admin-lte/plugins/summernote/summernote-bs4.min.js}"></script>-->
+    <script th:src="@{~/script/utils/csrfPrefilter.js}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <style>
+        .error {
+            color: #ff0000;
+        }
+    </style>
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+    <input type="hidden" id="userConnected" th:value="${userConnected}">
+    <div th:replace="fragments/top-bar.html :: top-bar"></div>
+    <div th:replace="fragments/sidebar.html :: sidebar"></div>
+    <!-- Content Wrapper. Contains page content -->
+    <div id="page-content">
+    </div>
+</div>
+<!-- custom script for this template -->
+<script th:src="@{~/script/javascript/dashboard.js}"></script>
+</body>
+</html>
+

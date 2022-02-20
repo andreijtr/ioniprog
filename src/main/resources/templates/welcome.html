@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link href="webjars/bootstrap/4.6.0/css/bootstrap.min.css" rel="stylesheet">
+    </head>
+    <body>
+        <h2>Hello <span id="name"></span>!</h2>
+        <button type="button" class="btn btn-primary">Get person!</button>
+        <div id="result"></div>
+        <script src="webjars/jquery/3.4.1/jquery.min.js"></script>
+        <script src="webjars/bootstrap/4.6.0/js/bootstrap.min.js"></script>
+    </body>
+</html>
+
+<script>
+    const displayName = function(name) {
+        document.getElementById("name").innerHTML = name;
+    }
+
+    const getPersonById = function (id, callback) {
+        $.ajax({
+            url : '/person/id/' + id,
+            type: 'GET',
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert("Status: " + textStatus); alert("Error: " + errorThrown);
+            }
+        }).done(function (data) {
+            callback(data);
+        });
+    }
+
+    const bindBtnPrimary = function () {
+        $('.btn-primary').on('click', function () {
+            getPersonById('1', function (data) {
+                console.log(data);
+            })
+        })
+    }
+
+    displayName("Andrei");
+    bindBtnPrimary();
+</script>
