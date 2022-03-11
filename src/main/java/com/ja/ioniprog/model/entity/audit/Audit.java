@@ -8,6 +8,7 @@ import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Embeddable
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
@@ -27,5 +28,22 @@ public class Audit {
                             .entityVersion(entityVersion)
                             .build();
         return audit;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Audit)) return false;
+        Audit audit = (Audit) o;
+        return Objects.equals(createdOn, audit.createdOn) &&
+                Objects.equals(actionType, audit.actionType) &&
+                Objects.equals(changes, audit.changes) &&
+                Objects.equals(entityVersion, audit.entityVersion) &&
+                Objects.equals(createdBy.getId(), audit.createdBy.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(createdOn, actionType, changes, entityVersion, createdBy.getId());
     }
 }

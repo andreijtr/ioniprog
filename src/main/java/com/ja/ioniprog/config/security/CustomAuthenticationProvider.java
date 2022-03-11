@@ -1,6 +1,9 @@
 package com.ja.ioniprog.config.security;
 
+import com.ja.ioniprog.service.PatientService;
 import com.ja.ioniprog.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -13,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
+    Logger logger = LoggerFactory.getLogger(CustomAuthenticationProvider.class);
 
     private CustomUserDetailsService userDetailsService;
     private PasswordEncoder          passwordEncoder;
@@ -30,22 +34,18 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String username = authentication.getName();
-        System.out.println("user try to login: " + username);
-
         String pwd = authentication.getCredentials().toString();
-        System.out.println("user pwd try to login: " + pwd);
 
         UserDetails userConnected = userDetailsService.loadUserByUsername(username);
-        System.out.println(userConnected);
 
         if (userConnected != null) {
             if (!userConnected.isAccountNonExpired()) {
-                System.out.println("userul e expirat");
+                logger.info("user expired!");
                 throw new BadCredentialsException("Invalid login details");
             }
 
             if (!userConnected.isAccountNonLocked()) {
-                System.out.println("userul e blocat");
+                logger.info("user blocked");
                 throw new BadCredentialsException("Invalid login details");
             }
 
@@ -57,7 +57,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
                 throw new BadCredentialsException("Invalid login details!");
             }
         } else {
-            System.out.println("userul nu a putut fi gasit");
+            logger.info("user not found");
             throw new BadCredentialsException("Invalid login details");
         }
     }

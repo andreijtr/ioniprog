@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -19,28 +19,34 @@
         </div>
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                <li class="nav-item">
+                <li sec:authorize="hasAuthority('DOCTOR')" class="nav-item">
                     <a class="nav-link" href="#">
                         <i class="fa fa-fw fa-calendar"></i>
                         <span>Programari</span>
                     </a>
                 </li>
-                <li class="nav-item">
+                <li sec:authorize="hasAuthority('DOCTOR')" class="nav-item">
                     <a class="nav-link collapsed" href="#" onclick="loadFragment('/patient')">
                         <i class="fas fa-fw fa-user-friends"></i>
                         <span>Pacienti</span>
                     </a>
                 </li>
-                <li class="nav-item">
+                <li sec:authorize="hasAuthority('DOCTOR')" class="nav-item">
                     <a class="nav-link collapsed" href="#">
                         <i class="fas fa-fw fa-map-marker-alt"></i>
                         <span>Cabinete</span>
                     </a>
                 </li>
-                <li class="nav-item">
+                <li sec:authorize="hasAuthority('DOCTOR')"class="nav-item">
                     <a class="nav-link" href="#">
                         <i class="fas fa-fw fa-folder-open"></i>
                         <span>Manopere</span></a>
+                </li>
+                <li sec:authorize="hasAuthority('ADMIN')" class="nav-item">
+                    <a class="nav-link collapsed" href="#" onclick="loadFragment('/user')">
+                        <i class="fas fa-fw fa-user"></i>
+                        <span>Utilizatori</span>
+                    </a>
                 </li>
             </ul>
         </nav>

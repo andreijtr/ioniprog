@@ -2,12 +2,11 @@ package com.ja.ioniprog.model.dto;
 
 import lombok.*;
 
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @ToString
-public class UserDto implements Serializable {
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @ToString @Builder
+public class UserDto {
     private String idUser;
     private String firstName;
     private String lastName;

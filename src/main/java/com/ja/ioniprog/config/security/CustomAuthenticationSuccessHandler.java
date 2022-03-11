@@ -18,15 +18,14 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
-    Logger logger = LoggerFactory.getLogger(PersistenceConfig.class);
+    Logger logger = LoggerFactory.getLogger(CustomAuthenticationSuccessHandler.class);
 
     @Autowired
     private UserBuilder userBuilder;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
-        logger.info("### User successful logged in!");
-
+        logger.info("User successful logged in!");
         UserDto userConnected = userBuilder.build(authentication.getName());
         LoggedUser.set(request, userConnected);
 

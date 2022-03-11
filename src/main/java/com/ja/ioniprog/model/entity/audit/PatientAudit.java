@@ -6,10 +6,11 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = "patient_audit")
-@Getter @Setter @Builder @NoArgsConstructor @AllArgsConstructor @ToString
+@Getter @Setter @AllArgsConstructor @ToString @NoArgsConstructor
 public class PatientAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,4 +30,24 @@ public class PatientAudit {
         @AttributeOverride(name = "entityVersion", column = @Column(name = "patient_version"))
     })
     private Audit audit;
+
+    public PatientAudit(Patient patient, Audit audit) {
+        this.setPatientEntity(patient);
+        this.setAudit(audit);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PatientAudit)) return false;
+        PatientAudit that = (PatientAudit) o;
+        return id == that.id &&
+                Objects.equals(patientEntity, that.patientEntity) &&
+                Objects.equals(audit, that.audit);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, patientEntity, audit);
+    }
 }
