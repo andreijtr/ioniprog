@@ -84,7 +84,8 @@ public class PatientService {
                                               .collect(Collectors.toList());
         }
         long totalRows = patientDao.getCountPaging(patientParams);
-        long totalPages = (totalRows / pageSize) + 1;
+        Double doubleTotalPages = Math.ceil((double) totalRows / pageSize);
+        long totalPages = doubleTotalPages.longValue();
         long currentPage = (offset / pageSize) + 1;
 
         return new PageResult<PatientDoctorDto>(patientDoctorDtos, totalPages, currentPage);

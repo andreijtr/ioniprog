@@ -8,6 +8,3 @@
     }
 })();
 
-function loadFragment(url) {
-    $('#page-content').load(url);
-}

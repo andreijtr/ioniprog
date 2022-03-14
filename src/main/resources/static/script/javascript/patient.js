@@ -100,25 +100,19 @@
             contentType : "application/json",
             data : JSON.stringify(jsonObject)
         }).done(function(data) {
-            console.log("a functionat requestul. asteas sunt datele", data);
+            showSuccessMessage("Pacient introdus cu succes!");
+            offset = 0;
+            const patientParams = getPatientsPagingParams(STATE.ACTIVE);
+            loadPatients(patientParams);
         }).fail(function( jqXHR, textStatus, errorThrown ) {
-            console.log("a esuat requestul. asta e statusul", jqXHR.status);
+            showErrorMessage("Ceva nu a functionat. Cod eroare: " + jqXHR.status + ".");
         })
     }
 
     // PAGING
     function initPage() {
         pageSizeSelect.value = "10";
-
-        const patientParams = {
-            "offset" : offset,
-            "pageSize" : pageSizeSelect.value,
-            "doctor" : {
-                "idUser" : loggedUser.idUser
-            },
-            "state" : "ACTIVE"
-        }
-
+        const patientParams = getPatientsPagingParams(STATE.ACTIVE);
         loadPatients(patientParams);
     }
 
@@ -276,16 +270,7 @@
         document.querySelectorAll('.pagingButton').forEach(function (btn) {
             btn.addEventListener('click', function () {
                 offset = (btn.innerHTML - 1) * pageSizeSelect.value;
-
-                const patientParams = {
-                    "offset" : offset,
-                    "pageSize" : pageSizeSelect.value,
-                    "doctor" : {
-                        "idUser" : loggedUser.idUser
-                    },
-                    "state" : "ACTIVE"
-                }
-
+                const patientParams = getPatientsPagingParams(STATE.ACTIVE);
                 loadPatients(patientParams);
             })
         })
@@ -294,18 +279,22 @@
     function bindChangeEventOnPageSizeSelect() {
         pageSizeSelect.addEventListener('change', function() {
             offset = 0;
-
-            const patientParams = {
-                "offset" : offset,
-                "pageSize" : pageSizeSelect.value,
-                "doctor" : {
-                    "idUser" : loggedUser.idUser
-                },
-                "state" : "ACTIVE"
-            }
-
+            const patientParams = getPatientsPagingParams("ACTIVE");
             loadPatients(patientParams);
         })
+    }
+
+    function getPatientsPagingParams(state) {
+        const patientParams = {
+            "offset" : offset,
+            "pageSize" : pageSizeSelect.value,
+            "doctor" : {
+                "idUser" : loggedUser.idUser
+            },
+            "state" : state
+        }
+
+        return patientParams;
     }
 
     function loadPatients(patientsParams) {
@@ -315,6 +304,9 @@
             data: JSON.stringify(patientsParams),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
+            beforeSend: function() {
+                $('#patientCardsRow').html('<div class="col text-center"><img src="/gif/loading.gif" style="width: 2rem;"></div>');
+            }
         }).done(function (data) {
             clearPatientsPaging();
             renderPatients(data.data);
