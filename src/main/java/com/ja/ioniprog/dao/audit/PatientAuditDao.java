@@ -15,11 +15,6 @@ public class PatientAuditDao {
     private EntityManager entityManager;
 
     public void save(PatientAudit patientAudit) {
-//        User createdBy = entityManager.getReference(User.class, patientAudit.getAudit().getCreatedBy().getId());
-//        Patient patientEntity = entityManager.getReference(Patient.class, patientAudit.getPatientEntity().getId());
-//        patientAudit.getAudit().setCreatedBy(createdBy);
-//        patientAudit.setPatientEntity(patientEntity);
-
         entityManager.persist(patientAudit);
     }
 }

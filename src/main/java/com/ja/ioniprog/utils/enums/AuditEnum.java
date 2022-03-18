@@ -1,7 +1,8 @@
 package com.ja.ioniprog.utils.enums;
 
 public enum AuditEnum {
-    INSERT("INSERT");
+    INSERT("INSERT"),
+    UPDATE("UPDATE");
 
     final String name;
 

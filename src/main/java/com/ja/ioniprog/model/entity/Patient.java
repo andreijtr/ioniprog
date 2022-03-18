@@ -1,6 +1,7 @@
 package com.ja.ioniprog.model.entity;
 
 import lombok.*;
+import org.hibernate.annotations.SelectBeforeUpdate;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -8,6 +9,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "patient")
+@SelectBeforeUpdate
 @Getter @Setter @Builder @NoArgsConstructor @AllArgsConstructor @ToString
 public class Patient {
     @Id
@@ -32,6 +34,9 @@ public class Patient {
 
     @Column(name = "state")
     private String status;
+
+    @Version
+    private int version;
 
     @Override
     public boolean equals(Object o) {

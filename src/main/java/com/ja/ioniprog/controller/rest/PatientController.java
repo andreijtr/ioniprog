@@ -1,6 +1,7 @@
 package com.ja.ioniprog.controller.rest;
 
 import com.ja.ioniprog.dao.PatientDoctorDao;
+import com.ja.ioniprog.exception.NoChangeDetectedException;
 import com.ja.ioniprog.model.dto.PatientDoctorDto;
 import com.ja.ioniprog.model.dto.PatientDto;
 import com.ja.ioniprog.model.dto.UserDto;
@@ -21,8 +22,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.OptimisticLockException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -47,6 +50,12 @@ public class PatientController {
         return new ResponseEntity<>(patientDto, HttpStatus.OK);
     }
 
+    @PostMapping(value = "/paging", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public PageResult<PatientDoctorDto> getPagination(@RequestBody PatientParams patientParams) {
+        logger.info("PatientController: get patients paging");
+        return patientService.getPatientsPaging(patientParams);
+    }
+
     @PostMapping(value = "/add", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> addPatient(@RequestBody PatientDto patientDto, HttpServletRequest request) {
         logger.info("PatientController: add patient");
@@ -56,10 +65,18 @@ public class PatientController {
         return new ResponseEntity<>("SUCCESS", HttpStatus.OK);
     }
 
-    @PostMapping(value = "/paging", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public PageResult<PatientDoctorDto> getPagination(@RequestBody PatientParams patientParams) {
-        logger.info("PatientController: get patients paging");
-        return patientService.getPatientsPaging(patientParams);
+    @PutMapping(value = "/update", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> updatePatient(@Valid @RequestBody PatientDto patientDto, HttpServletRequest request) {
+        logger.info("PatientController: update patient");
+        UserDto userDto = LoggedUser.get(request);
+        PatientParams patientParams = PatientParams.builder().loggedUser(userDto).build();
+        try {
+            patientService.update(patientDto, patientParams);
+        } catch (NoChangeDetectedException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (OptimisticLockException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
-
 }
