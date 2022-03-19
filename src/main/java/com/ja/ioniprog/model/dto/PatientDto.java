@@ -5,17 +5,23 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 
 @Data @NoArgsConstructor @Builder @AllArgsConstructor
 public class PatientDto {
     private String idPatient;
+    @NotBlank(message = "Field cannot be empty.")
     private String firstName;
+    @NotBlank(message = "Field cannot be empty.")
     private String lastName;
+    @NotBlank(message = "Field cannot be empty.")
     private String phone;
+    @NotBlank(message = "Field cannot be empty.")
     private String birthdayDate;
     private String details;
     private String status;
+    private int version;
 
     @Override
     public boolean equals(Object o) {

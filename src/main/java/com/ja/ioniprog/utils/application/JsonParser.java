@@ -22,6 +22,7 @@ public class JsonParser {
             json = objectMapper.writeValueAsString(object);
         } catch (Exception e) {
             e.printStackTrace();
+            throw new RuntimeException("Error while parsing object.");
         }
         return json;
     }

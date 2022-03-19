@@ -3,6 +3,7 @@ package com.ja.ioniprog.dao;
 import com.ja.ioniprog.model.entity.Patient;
 import com.ja.ioniprog.model.entity.PatientDoctor;
 import com.ja.ioniprog.model.params.PatientParams;
+import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -41,12 +42,6 @@ public class PatientDao {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public int save(Patient patient) {
-        entityManager.persist(patient);
-
-        return patient.getId();
-    }
-
     public Patient getById(int idPatient) {
         TypedQuery<Patient> query = entityManager.createQuery(GET_PATIENT_BY_ID, Patient.class);
         query.setParameter("idPatient", idPatient);
@@ -70,5 +65,16 @@ public class PatientDao {
                                     .setParameter("globalSearch", patientParams.getGlobalSearch())
                                     .setParameter("state", patientParams.getState());
         return (Long) query.getSingleResult();
+    }
+
+    public int save(Patient patient) {
+        entityManager.persist(patient);
+
+        return patient.getId();
+    }
+
+    public void update(Patient patient) {
+        Session session = entityManager.unwrap(Session.class);
+        session.update(patient);
     }
 }

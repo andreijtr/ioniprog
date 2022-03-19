@@ -11,14 +11,21 @@
 
     // modal
     setBirthDatePicker();
-    bindCloseModalPatientButtonClickEvent();
+    bindClickEventOnAddPatientButton();
+    bindClickEventOnCloseModalPatientButton();
 
     // paging
     initPage();
     bindChangeEventOnPageSizeSelect();
 
     // MODAL ADD|EDIT PATIENT
-    function bindCloseModalPatientButtonClickEvent() {
+    function bindClickEventOnAddPatientButton() {
+        $('#addPatient').on('click', function() {
+            $('#modalPatient .modal-title').html('Pacient nou');
+            $('#modalPatient').modal('show');
+        });
+    }
+    function bindClickEventOnCloseModalPatientButton() {
         $('.closeModalPatient').on('click', function() {
             closeModalPatient();
         })
@@ -32,6 +39,7 @@
         $('#detailsInput').val('');
         $("#birthDatePicker").find('input').val('');
         $('#statusInput').val('');
+        $('#versionInput').val('');
 
         $('#modalPatient').modal('hide');
         validatorPatientForm.resetForm();
@@ -70,6 +78,11 @@
                     jsonObject['status'] = 'ACTIVE';
                     addPatientAjax(jsonObject);
                 }
+                else {
+                    let jsonObject = createJsonFromPatientForm();
+                    delete jsonObject.doctorResponsible;
+                    updatePatientAjax(jsonObject);
+                }
 
                 closeModalPatient();
             }
@@ -86,6 +99,7 @@
             "birthdayDate" : $("#birthDatePicker").find('input').val(),
             "details" : $('#detailsInput').val(),
             "status" : $('#statusInput').val(),
+            "version" : $('#versionInput').val(),
             "doctorResponsible" : {
                 "idDoctor" : loggedUser.idUser
             }
@@ -123,10 +137,11 @@
 
     function renderPatients(data) {
         const patientsRow = document.getElementById('patientCardsRow');
-        data.forEach(patientDoctor => patientsRow.appendChild(createPatientCard(patientDoctor.patientDto)));
+        data.forEach(patientDoctor => patientsRow.appendChild(createPatientCard(patientDoctor)));
     }
 
-    function createPatientCard(patient) {
+    function createPatientCard(patientDoctor) {
+        const patient = patientDoctor.patientDto;
         const card = document.createElement('div');
         const cardHeader = document.createElement('div');
         const cardBody = document.createElement('div');
@@ -147,7 +162,7 @@
 
         cardBody.classList.add('card-body');
         cardBody.style.padding = '0';
-        cardBody.appendChild(createTable(patient));
+        cardBody.appendChild(createTable(patientDoctor));
 
         const column = document.createElement('div')
         column.classList.add('col-md-3');
@@ -174,7 +189,8 @@
         return cardTools;
     }
 
-    function createTable(patient) {
+    function createTable(patientDoctor) {
+        const patient = patientDoctor.patientDto;
         const table = document.createElement('table');
         const tbody = document.createElement('tbody');
 
@@ -186,7 +202,7 @@
         tbody.appendChild(createRowTbody('Data nasterii', patient.birthdayDate));
         tbody.appendChild(createRowTbody('Descriere', (patient.details != '' ? patient.details : '-')));
         tbody.appendChild(createRowTbody('Status', patient.status));
-        tbody.appendChild(createRowActions());
+        tbody.appendChild(createRowActions(JSON.stringify(patientDoctor)));
 
         return table;
     }
@@ -214,30 +230,35 @@
         return row;
     }
 
-    function createRowActions() {
+    function createRowActions(jsonPatientDoctor) {
         let row = document.createElement('tr');
         let col = document.createElement('td');
         col.setAttribute('colspan', '2');
         row.appendChild(col);
 
+        let inputJson = document.createElement('input');
         let editBtn = document.createElement('button');
         let scheduleBtn = document.createElement('button');
         let transferBtn = document.createElement('button');
         let deleteBtn = document.createElement('button');
         let infoBtn = document.createElement('button');
 
+        inputJson.style.display = 'none';
         editBtn.classList.add('btn', 'btn-sm', 'btn-secondary', 'mr-1', 'editPatient');
         scheduleBtn.classList.add('btn', 'btn-sm', 'btn-success','mr-1','schedulePatient');
         transferBtn.classList.add('btn', 'btn-sm', 'btn-warning','mr-1', 'transferPatient');
         deleteBtn.classList.add('btn', 'btn-sm', 'btn-danger','mr-1', 'deletePatient');
         infoBtn.classList.add('btn', 'btn-sm', 'btn-secondary','mr-1', 'showInfoPatient');
 
+        inputJson.setAttribute('type', 'text');
+        inputJson.setAttribute('value' , jsonPatientDoctor);
         editBtn.innerHTML = 'Editeaza';
         scheduleBtn.innerHTML = 'Programeaza';
         transferBtn.innerHTML = 'Transfera';
         deleteBtn.innerHTML = 'Sterge';
         infoBtn.innerHTML = 'Info';
 
+        col.appendChild(inputJson);
         col.appendChild(editBtn);
         col.appendChild(scheduleBtn);
         col.appendChild(infoBtn);
@@ -312,9 +333,49 @@
             renderPatients(data.data);
             renderPagingButtons(data.currentPage, data.totalPages);
             bindClickEventPagingButtons();
+            bindClickEventEditButton();
         }).fail(function( jqXHR, textStatus, errorThrown ) {
             console.log("a esuat requestul. asta e statusul", jqXHR.status);
         });
+    }
+
+    // EDIT
+    function bindClickEventEditButton() {
+        document.querySelectorAll('.editPatient').forEach(function (btn) {
+            btn.addEventListener('click', function() {
+                const stringPatientDoctor = $(btn).siblings('input').val();
+                const patient = JSON.parse(stringPatientDoctor).patientDto;
+
+                $('#idPatientInput').val(patient.idPatient);
+                $('#firstnameInput').val(patient.firstName);
+                $('#lastnameInput').val(patient.lastName);
+                $('#phoneInput').val(patient.phone);
+                $("#birthDatePicker").find('input').val(patient.birthdayDate);
+                $('#detailsInput').val(patient.details);
+                $('#statusInput').val(patient.status);
+                $('#versionInput').val(patient.version);
+
+                $('#modalPatient .modal-title').html('Editeaza pacientul ' + patient.lastName + ' ' + patient.firstName);
+                $('#modalPatient').modal('show');
+            })
+        })
+    }
+
+    function updatePatientAjax(jsonObject) {
+        $.ajax({
+            url: "/patient/update",
+            type: 'PUT',
+            contentType : "application/json",
+            data : JSON.stringify(jsonObject)
+        }).done(function(data) {
+            showSuccessMessage("Pacient a fost modificat cu succes!");
+            const patientParams = getPatientsPagingParams(STATE.ACTIVE);
+            loadPatients(patientParams);
+        }).fail(function( jqXHR, textStatus, errorThrown ) {
+            showErrorMessage(jqXHR.responseText);
+            const patientParams = getPatientsPagingParams(STATE.ACTIVE);
+            loadPatients(patientParams);
+        })
     }
 
 })();

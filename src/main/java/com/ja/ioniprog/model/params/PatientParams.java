@@ -17,6 +17,8 @@ public class PatientParams {
     private String globalSearch;
     private String state;
 
+    private UserDto loggedUser;
+
     private int offset;
     private int pageSize;
 }
