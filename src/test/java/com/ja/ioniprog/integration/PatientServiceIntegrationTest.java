@@ -13,7 +13,7 @@ import com.ja.ioniprog.model.entity.User;
 import com.ja.ioniprog.model.entity.audit.Audit;
 import com.ja.ioniprog.model.entity.audit.PatientAudit;
 import com.ja.ioniprog.model.params.PatientParams;
-import com.ja.ioniprog.service.PatientService;
+import com.ja.ioniprog.unit.PatientService;
 import com.ja.ioniprog.utils.application.JsonParser;
 import com.ja.ioniprog.utils.enums.ApplicationEnum;
 import org.dozer.Mapper;

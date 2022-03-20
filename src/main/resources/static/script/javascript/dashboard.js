@@ -18,7 +18,7 @@
             "onclick": null,
             "showDuration": "300",
             "hideDuration": "300",
-            "timeOut": "5000",
+            "timeOut": "8000",
             "showEasing": "swing",
             "hideEasing": "linear",
             "showMethod": "fadeIn",

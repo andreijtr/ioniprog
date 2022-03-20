@@ -3,7 +3,7 @@ package com.ja.ioniprog.builder;
 import com.ja.ioniprog.model.dto.UserDto;
 import com.ja.ioniprog.model.entity.User;
 import com.ja.ioniprog.model.entity.UserRole;
-import com.ja.ioniprog.service.UserService;
+import com.ja.ioniprog.unit.UserService;
 import com.ja.ioniprog.utils.enums.RoleEnum;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
