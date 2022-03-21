@@ -1,6 +1,5 @@
 package com.ja.ioniprog.config.security;
 
-import com.ja.ioniprog.service.PatientService;
 import com.ja.ioniprog.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

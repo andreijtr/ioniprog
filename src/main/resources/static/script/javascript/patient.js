@@ -334,6 +334,7 @@
             renderPagingButtons(data.currentPage, data.totalPages);
             bindClickEventPagingButtons();
             bindClickEventEditButton();
+            bindClickEventOnDeleteButton();
         }).fail(function( jqXHR, textStatus, errorThrown ) {
             console.log("a esuat requestul. asta e statusul", jqXHR.status);
         });
@@ -369,6 +370,45 @@
             data : JSON.stringify(jsonObject)
         }).done(function(data) {
             showSuccessMessage("Pacient a fost modificat cu succes!");
+            const patientParams = getPatientsPagingParams(STATE.ACTIVE);
+            loadPatients(patientParams);
+        }).fail(function( jqXHR, textStatus, errorThrown ) {
+            showErrorMessage(jqXHR.responseText);
+            const patientParams = getPatientsPagingParams(STATE.ACTIVE);
+            loadPatients(patientParams);
+        })
+    }
+
+    // DELETE
+    function bindClickEventOnDeleteButton() {
+        document.querySelectorAll('.deletePatient').forEach(function (btn) {
+            btn.addEventListener('click', function() {
+                const stringPatientDoctor = $(btn).siblings('input').val();
+                const patientDoctor = JSON.parse(stringPatientDoctor);
+
+                bootbox.confirm({
+                    size: 'small',
+                    message: 'Stergeti pacientul ' + patientDoctor.patientDto.lastName + ' ' + patientDoctor.patientDto.firstName + '?',
+                    callback: function (confirmed) {
+                        if (confirmed) {
+                            deletePatientAjax(patientDoctor.idPatientDoctor);
+                        }
+                    }
+                })
+            })
+        })
+    }
+
+    function deletePatientAjax(idPatientDoctor) {
+        // this function updates state of PatientDoctor to deleted. Patient entity isn't change
+        // reason is that a patient can belong to many users, so a user can delete only his PatientDoctor binding
+        $.ajax({
+            url: "/patient/deletePatientDoctor",
+            type: 'PUT',
+            data : {'idPatientDoctor' : idPatientDoctor}
+        }).done(function() {
+            showSuccessMessage("Pacientul a fost sters cu succes!");
+            offset = 0;
             const patientParams = getPatientsPagingParams(STATE.ACTIVE);
             loadPatients(patientParams);
         }).fail(function( jqXHR, textStatus, errorThrown ) {

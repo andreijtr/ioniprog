@@ -1,7 +1,8 @@
 package com.ja.ioniprog.utils.enums;
 
 public enum StateEnum {
-    ACTIVE("ACTIVE");
+    ACTIVE("ACTIVE"),
+    DELETED("DELETED");
 
     String name;
 

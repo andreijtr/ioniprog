@@ -1,14 +1,14 @@
 package com.ja.ioniprog.controller.rest;
 
-import com.ja.ioniprog.dao.PatientDoctorDao;
+import com.ja.ioniprog.exception.IllegalOperationException;
 import com.ja.ioniprog.exception.NoChangeDetectedException;
 import com.ja.ioniprog.model.dto.PatientDoctorDto;
 import com.ja.ioniprog.model.dto.PatientDto;
 import com.ja.ioniprog.model.dto.UserDto;
 import com.ja.ioniprog.model.paging.PageResult;
 import com.ja.ioniprog.model.params.PatientParams;
+import com.ja.ioniprog.service.PatientDoctorService;
 import com.ja.ioniprog.service.PatientService;
-import com.ja.ioniprog.service.UserService;
 import com.ja.ioniprog.utils.application.LoggedUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,13 +26,11 @@ import javax.validation.Valid;
 public class PatientController {
     private Logger logger = LoggerFactory.getLogger(PatientController.class);
     private PatientService patientService;
-    private PatientDoctorDao patientDoctorDao;
-    private UserService userService;
+    private PatientDoctorService patientDoctorService;
 
-    public PatientController(PatientService patientService, PatientDoctorDao patientDoctorDao, UserService userService) {
+    public PatientController(PatientService patientService, PatientDoctorService patientDoctorService) {
         this.patientService = patientService;
-        this.patientDoctorDao = patientDoctorDao;
-        this.userService = userService;
+        this.patientDoctorService = patientDoctorService;
     }
 
     @GetMapping(value = "/get")
@@ -68,6 +66,19 @@ public class PatientController {
         } catch (NoChangeDetectedException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (OptimisticLockException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/deletePatientDoctor")
+    public ResponseEntity<String> deletePatientDoctor(@RequestParam String idPatientDoctor, HttpServletRequest request) {
+        logger.info("PatientController: delete patientDoctor");
+        UserDto userDto = LoggedUser.get(request);
+        PatientParams patientParams = PatientParams.builder().loggedUser(userDto).build();
+        try {
+            patientDoctorService.delete(idPatientDoctor, patientParams);
+        } catch (IllegalOperationException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(HttpStatus.OK);

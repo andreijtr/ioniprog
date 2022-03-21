@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class PatientService {
     Logger logger = LoggerFactory.getLogger(PatientService.class);
 
@@ -158,36 +159,5 @@ public class PatientService {
             logger.info("Update failed because entity was already modified!");
             throw new OptimisticLockException("Update failed because entity was already modified!");
         }
-    }
-
-    private List<ChangeDto> compareAndGetChanges(Patient patientOld, PatientDto patientDtoNew) {
-        Patient patientNew = dozerMapper.map(patientDtoNew, Patient.class);
-        List<ChangeDto> changes = new ArrayList<>();
-
-        if (!patientNew.getFirstName().contentEquals(patientOld.getFirstName()))
-            changes.add(new ChangeDto("First name", patientNew.getFirstName(), patientOld.getFirstName()));
-
-        if (!patientNew.getLastName().contentEquals(patientOld.getLastName()))
-            changes.add(new ChangeDto("Last name", patientNew.getLastName(), patientOld.getLastName()));
-
-        if (!patientNew.getPhone().contentEquals(patientOld.getPhone()))
-            changes.add(new ChangeDto("Phone", patientNew.getPhone(), patientOld.getPhone()));
-
-        if (!patientNew.getBirthdayDate().isEqual(patientOld.getBirthdayDate()))
-            changes.add(new ChangeDto("Birthday date", patientNew.getBirthdayDate().toString(), patientOld.getBirthdayDate().toString()));
-
-        if (patientNew.getDetails() != null) {
-            if ((patientOld.getDetails() != null && !patientNew.getDetails().contentEquals(patientOld.getDetails())) || patientOld.getDetails() == null) {
-                changes.add(new ChangeDto("Details", patientNew.getDetails(), patientOld.getDetails()));
-            }
-        } else {
-            if(patientOld.getDetails() != null)
-                changes.add(new ChangeDto("Details", patientNew.getDetails(), patientOld.getDetails()));
-        }
-
-        if (patientNew.getStatus() != null && !patientNew.getStatus().contentEquals(patientOld.getStatus()))
-            changes.add(new ChangeDto("Status", patientNew.getStatus(), patientOld.getStatus()));
-
-        return changes;
     }
 }

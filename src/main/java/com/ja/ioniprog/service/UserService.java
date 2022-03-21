@@ -2,7 +2,6 @@ package com.ja.ioniprog.service;
 
 import com.ja.ioniprog.config.persistence.PersistenceConfig;
 import com.ja.ioniprog.dao.UserDao;
-import com.ja.ioniprog.model.dto.UserDto;
 import com.ja.ioniprog.model.entity.User;
 import com.ja.ioniprog.model.params.UserParams;
 import com.ja.ioniprog.utils.enums.ApplicationEnum;
