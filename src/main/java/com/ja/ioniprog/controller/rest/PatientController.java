@@ -7,8 +7,8 @@ import com.ja.ioniprog.model.dto.PatientDto;
 import com.ja.ioniprog.model.dto.UserDto;
 import com.ja.ioniprog.model.paging.PageResult;
 import com.ja.ioniprog.model.params.PatientParams;
-import com.ja.ioniprog.unit.PatientDoctorService;
-import com.ja.ioniprog.unit.PatientService;
+import com.ja.ioniprog.service.PatientDoctorService;
+import com.ja.ioniprog.service.PatientService;
 import com.ja.ioniprog.utils.application.LoggedUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.persistence.OptimisticLockException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 
 @RestController
 @RequestMapping("/patient")

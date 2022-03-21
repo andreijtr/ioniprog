@@ -1,7 +1,7 @@
 package com.ja.ioniprog.config.security;
 
 import com.ja.ioniprog.model.entity.User;
-import com.ja.ioniprog.unit.UserService;
+import com.ja.ioniprog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

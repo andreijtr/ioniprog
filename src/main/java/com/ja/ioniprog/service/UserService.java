@@ -1,4 +1,4 @@
-package com.ja.ioniprog.unit;
+package com.ja.ioniprog.service;
 
 import com.ja.ioniprog.config.persistence.PersistenceConfig;
 import com.ja.ioniprog.dao.UserDao;

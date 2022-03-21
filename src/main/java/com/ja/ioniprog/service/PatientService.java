@@ -1,4 +1,4 @@
-package com.ja.ioniprog.unit;
+package com.ja.ioniprog.service;
 
 import com.ja.ioniprog.config.security.annotations.IsDoctor;
 import com.ja.ioniprog.dao.PatientDao;

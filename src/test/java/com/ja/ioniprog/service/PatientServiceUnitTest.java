@@ -1,4 +1,4 @@
-package com.ja.ioniprog.unit;
+package com.ja.ioniprog.service;
 
 import com.ja.ioniprog.dao.PatientDao;
 import com.ja.ioniprog.dao.PatientDoctorDao;

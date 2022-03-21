@@ -1,4 +1,4 @@
-package com.ja.ioniprog.unit;
+package com.ja.ioniprog.service;
 
 import com.ja.ioniprog.config.security.annotations.IsDoctor;
 import com.ja.ioniprog.dao.PatientDoctorDao;
@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.OptimisticLockException;
 import java.time.LocalDateTime;
 
 @Service

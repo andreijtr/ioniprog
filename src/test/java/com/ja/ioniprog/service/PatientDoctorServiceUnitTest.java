@@ -1,4 +1,4 @@
-package com.ja.ioniprog.unit;
+package com.ja.ioniprog.service;
 
 import com.ja.ioniprog.dao.PatientDoctorDao;
 import com.ja.ioniprog.exception.IllegalOperationException;
@@ -6,7 +6,6 @@ import com.ja.ioniprog.model.dto.UserDto;
 import com.ja.ioniprog.model.entity.PatientDoctor;
 import com.ja.ioniprog.model.entity.User;
 import com.ja.ioniprog.model.params.PatientParams;
-import com.ja.ioniprog.utils.application.LoggedUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -18,7 +17,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.persistence.OptimisticLockException;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
