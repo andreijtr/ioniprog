@@ -1,14 +1,20 @@
 package com.ja.ioniprog.config.mapping;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ja.ioniprog.config.mapping.converters.ChangesCustomConverter;
 import com.ja.ioniprog.config.mapping.converters.LocalDateCustomConverter;
 import com.ja.ioniprog.config.mapping.converters.LocalDateTimeCustomConverter;
 import com.ja.ioniprog.model.dto.UserShortDto;
 import com.ja.ioniprog.model.dto.PatientDoctorDto;
 import com.ja.ioniprog.model.dto.PatientDto;
 import com.ja.ioniprog.model.dto.UserDto;
+import com.ja.ioniprog.model.dto.audit.AuditDto;
+import com.ja.ioniprog.model.dto.audit.PatientAuditDto;
 import com.ja.ioniprog.model.entity.Patient;
 import com.ja.ioniprog.model.entity.PatientDoctor;
 import com.ja.ioniprog.model.entity.User;
+import com.ja.ioniprog.model.entity.audit.Audit;
+import com.ja.ioniprog.model.entity.audit.PatientAudit;
 import org.dozer.CustomConverter;
 import org.dozer.DozerBeanMapper;
 import org.dozer.loader.api.BeanMappingBuilder;
@@ -27,6 +33,8 @@ public class DozerConfig {
         dozerBeanMapper.addMapping(patientToPatientDtoMapping());
         dozerBeanMapper.addMapping(userToUserShortDtoMapping());
         dozerBeanMapper.addMapping(patientDoctorToPatientDoctorDtoMapping());
+        dozerBeanMapper.addMapping(patientAuditToPatientAuditDtoMapping());
+        dozerBeanMapper.addMapping(auditToAuditDtoMapping());
 
         return dozerBeanMapper;
     }
@@ -83,6 +91,32 @@ public class DozerConfig {
         };
     }
 
+    @Bean
+    public BeanMappingBuilder patientAuditToPatientAuditDtoMapping() {
+        return new BeanMappingBuilder(){
+
+            @Override
+            protected void configure() {
+                mapping(PatientAudit.class, PatientAuditDto.class)
+                        .fields("id", "idPatientAudit")
+                        .fields("patientEntity.id", "idPatient")
+                        .fields("audit", "auditDto");
+            }
+        };
+    }
+    @Bean
+    public BeanMappingBuilder auditToAuditDtoMapping() {
+        return new BeanMappingBuilder() {
+            @Override
+            protected void configure() {
+                mapping(Audit.class, AuditDto.class)
+                        .fields("createdOn", "createdOn", FieldsMappingOptions.customConverter(LocalDateTimeCustomConverter.class))
+                        .fields("changes", "changes", FieldsMappingOptions.customConverter(ChangesCustomConverter.class))
+                        .exclude("entityVersion");
+            }
+        };
+    }
+
     // CONVERTERS
     @Bean
     public CustomConverter localDateCustomConverter() {
@@ -92,5 +126,10 @@ public class DozerConfig {
     @Bean
     public CustomConverter localDateTimeCustomConverter() {
         return new LocalDateTimeCustomConverter();
+    }
+
+    @Bean
+    public CustomConverter changesCustomConverter() {
+        return new ChangesCustomConverter();
     }
 }

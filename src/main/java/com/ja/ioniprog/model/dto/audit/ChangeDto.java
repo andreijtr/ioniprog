@@ -1,17 +1,17 @@
-package com.ja.ioniprog.model.dto;
+package com.ja.ioniprog.model.dto.audit;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Objects;
 
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class ChangeDto {
-    public final String columnName;
-    public final String newValue;
-    public final String oldValue;
-
-    public ChangeDto(String columnName, String newValue, String oldValue) {
-        this.columnName = columnName;
-        this.newValue = newValue;
-        this.oldValue = oldValue;
-    }
+    public String columnName;
+    public String newValue;
+    public String oldValue;
 
     @Override
     public boolean equals(Object o) {

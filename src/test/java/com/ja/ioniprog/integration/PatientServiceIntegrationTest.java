@@ -4,7 +4,7 @@ import com.ja.ioniprog.dao.PatientDao;
 import com.ja.ioniprog.dao.PatientDoctorDao;
 import com.ja.ioniprog.dao.audit.PatientAuditDao;
 import com.ja.ioniprog.exception.NoChangeDetectedException;
-import com.ja.ioniprog.model.dto.ChangeDto;
+import com.ja.ioniprog.model.dto.audit.ChangeDto;
 import com.ja.ioniprog.model.dto.PatientDto;
 import com.ja.ioniprog.model.dto.UserDto;
 import com.ja.ioniprog.model.entity.Patient;

@@ -1,7 +1,8 @@
 
 (function() {
     const STATE = {
-        ACTIVE : "ACTIVE"
+        ACTIVE : "ACTIVE",
+        DELETED : "DELETED"
     };
     const loggedUser = JSON.parse(document.getElementById('userConnected').value);
     const validatorPatientForm = validatePatientForm();
@@ -335,6 +336,8 @@
             bindClickEventPagingButtons();
             bindClickEventEditButton();
             bindClickEventOnDeleteButton();
+            bindClickEventOnInfoButton();
+            bindClickEventOnBackToPatientPanelBtn();
         }).fail(function( jqXHR, textStatus, errorThrown ) {
             console.log("a esuat requestul. asta e statusul", jqXHR.status);
         });
@@ -418,4 +421,239 @@
         })
     }
 
+    // INFO SECTION
+    function showSection(show, hide) {
+        $('#' + hide).slideUp(function() {
+            $('#' + show).slideDown();
+        })
+    }
+
+    function bindClickEventOnInfoButton() {
+        document.querySelectorAll('.showInfoPatient').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                const stringPatientDoctor = $(btn).siblings('input').val();
+                const patientDoctor = JSON.parse(stringPatientDoctor);
+                document.getElementById('titleInfoSection').innerHTML = `Informatii pentru pacientul ${patientDoctor.patientDto.lastName} ${patientDoctor.patientDto.firstName} `;
+                loadPatientAudit(patientDoctor.patientDto.idPatient);
+                loadPatientDoctors(patientDoctor.patientDto.idPatient);
+                showSection('infoSection', 'patientSection');
+            })
+        })
+    }
+
+    function bindClickEventOnBackToPatientPanelBtn() {
+        document.getElementById("backToPatientPanelBtn")
+                .addEventListener('click', function() {
+                    showSection('patientSection', 'infoSection');
+                });
+    }
+
+    // INFO AUDIT - TIMELINE
+    function loadPatientAudit(idPatient) {
+        $.ajax({
+            url : "/patient/audit?idPatient=" + idPatient,
+            type: "GET",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            beforeSend: function() {
+                $('#timelinePatient').html('<div class="col text-center"><img src="/gif/loading.gif" style="width: 2rem;"></div>');
+            }
+        }).done(function(data) {
+            renderAudit(data);
+        })
+    }
+
+    function renderAudit(auditList) {
+        const timeline = document.getElementById('timelinePatient');
+        timeline.innerHTML = '';
+
+        for (let i = 0; i < auditList.length; i++) {
+            timeline.appendChild(createDateLabel(auditList[i].auditDto));
+
+            switch (auditList[i].auditDto.actionType) {
+                case 'INSERT':
+                    timeline.appendChild(createInsertTimeline(auditList[i].auditDto));
+                    break;
+                case 'UPDATE':
+                    timeline.appendChild(createUpdateTimeline(auditList[i].auditDto));
+                    break;
+            }
+        }
+    }
+
+    function createDateLabel(audit) {
+        const timeLabel = document.createElement('div');
+        timeLabel.classList.add('time-label');
+
+        const spanTimelabel = document.createElement('span');
+        spanTimelabel.innerHTML = audit.createdOn.split(' ')[0];
+        switch (audit.actionType) {
+            case 'INSERT':
+                spanTimelabel.classList.add('bg-success');
+                break;
+            case 'UPDATE':
+                spanTimelabel.classList.add('bg-warning');
+                break;
+            default:
+                spanTimelabel.classList.add('bg-info');
+        }
+        timeLabel.appendChild(spanTimelabel);
+
+        return timeLabel;
+    }
+
+    function createInsertTimeline(audit) {
+        const divItem = document.createElement('div');
+        const iElement = document.createElement('i');
+        iElement.classList.add('fas', 'fa-solid', 'fa-plus', 'bg-success');
+
+        divItem.appendChild(iElement);
+
+        const timelineItem = document.createElement('div');
+        timelineItem.classList.add('timeline-item');
+
+        divItem.appendChild(timelineItem);
+
+        const time = document.createElement('span');
+        time.classList.add('time');
+        const timePicture = document.createElement('i');
+        timePicture.classList.add('fas', 'fa-clock');
+
+        time.appendChild(timePicture);
+        time.innerHTML += ' ' + audit.createdOn.split(' ')[1].substring(0, 5);
+
+        timelineItem.appendChild(time);
+
+        const timelineHeader = document.createElement('h3');
+        timelineHeader.classList.add('timeline-header');
+        timelineHeader.innerHTML = `<a href="#"> ${audit.createdBy.firstName} ${audit.createdBy.lastName}</a> a introdus pacientul`;
+        timelineItem.appendChild(timelineHeader);
+
+        return divItem;
+    }
+
+    function createUpdateTimeline(audit) {
+        const divItem = document.createElement('div');
+        const iElement = document.createElement('i');
+        iElement.classList.add('fas', 'fa-solid', 'fa-pen', 'bg-warning');
+
+        divItem.appendChild(iElement);
+
+        const timelineItem = document.createElement('div');
+        timelineItem.classList.add('timeline-item');
+
+        divItem.appendChild(timelineItem);
+
+        const time = document.createElement('span');
+        time.classList.add('time');
+
+        const timePicture = document.createElement('i');
+        timePicture.classList.add('fas', 'fa-clock');
+
+        time.appendChild(timePicture);
+        time.innerHTML += ' ' + audit.createdOn.split(' ')[1].substring(0, 5);
+
+        timelineItem.appendChild(time);
+
+        const timelineHeader = document.createElement('h3');
+        timelineHeader.classList.add('timeline-header');
+        timelineHeader.innerHTML = `<a href="#"> ${audit.createdBy.firstName} ${audit.createdBy.lastName}</a> a modificat datele pacientului`;
+        timelineItem.appendChild(timelineHeader);
+
+        const timelineBody = document.createElement('h3');
+        timelineBody.classList.add('timeline-body');
+        timelineBody.style.overflowX = 'auto';
+        const changesTable = createChangesTable(audit.changes);
+        timelineBody.appendChild(changesTable);
+        timelineItem.appendChild(timelineBody);
+
+        return divItem;
+    }
+
+    function createChangesTable(changes) {
+        const table = document.createElement('table');
+        const thead = document.createElement('thead');
+        const tbody = document.createElement('tbody');
+
+        table.classList.add('table', 'table-striped', 'table-bordered');
+        table.style.fontSize = '15px';
+
+        table.appendChild(thead);
+        table.appendChild(tbody);
+
+        let col1 = document.createElement('th');
+        col1.innerHTML = 'Campul';
+        let col2 = document.createElement('th');
+        col2.innerHTML = 'Valoare noua';
+        let col3 = document.createElement('th');
+        col3.innerHTML = 'Valoare veche';
+
+        thead.appendChild(col1);
+        thead.appendChild(col2);
+        thead.appendChild(col3);
+
+        for (let i = 0; i < changes.length; i++) {
+            const row = document.createElement('tr');
+
+            let col = document.createElement('td');
+            col.innerHTML = changes[i].columnName;
+            row.appendChild(col);
+
+            col = document.createElement('td');
+            col.innerHTML = changes[i].newValue;
+            row.appendChild(col);
+
+            col = document.createElement('td');
+            col.innerHTML = changes[i].oldValue;
+            row.appendChild(col);
+
+            tbody.appendChild(row);
+        }
+
+        return table;
+    }
+
+    // INFO DOCTORS
+    function loadPatientDoctors (idPatient) {
+        $.ajax({
+            url : "/patient/get",
+            type: "POST",
+            data : JSON.stringify({"idPatient" : idPatient, "orderByDoctor" : true}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            beforeSend: function() {
+                $('#infoPatientDoctors').html('<div class="col text-center"><img src="/gif/loading.gif" style="width: 2rem;"></div>');
+            }
+        }).done(function(data) {
+            renderPatientDoctors(data);
+        })
+    }
+
+    function renderPatientDoctors(data) {
+        const parentElement = document.getElementById('infoPatientDoctors');
+        parentElement.innerHTML = '';
+        for (let i = 0; i < data.length; i++) {
+            const callout = document.createElement('div');
+            const paragraph = document.createElement('p');
+            const badge = document.createElement('span');
+            const h5 = document.createElement('h5');
+            h5.innerHTML = `Dr. ${data[i].doctorDto.lastName} ${data[i].doctorDto.firstName}`;
+
+            if (data[i].state == STATE.ACTIVE) {
+                callout.classList.add('callout', 'callout-success');
+                badge.classList.add('badge', 'badge-success');
+                paragraph.appendChild(badge);
+                paragraph.innerText = 'Activ';
+            }
+            else if (data[i].state == STATE.DELETED) {
+                callout.classList.add('callout', 'callout-danger');
+                badge.classList.add('badge', 'badge-danger');
+                paragraph.appendChild(badge);
+                paragraph.innerText = 'Sters';
+            }
+            callout.appendChild(h5);
+            callout.appendChild(paragraph);
+            parentElement.appendChild(callout);
+        }
+    }
 })();
