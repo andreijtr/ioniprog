@@ -5,9 +5,10 @@ import com.ja.ioniprog.dao.PatientDao;
 import com.ja.ioniprog.dao.audit.PatientAuditDao;
 import com.ja.ioniprog.dao.PatientDoctorDao;
 import com.ja.ioniprog.exception.NoChangeDetectedException;
-import com.ja.ioniprog.model.dto.ChangeDto;
+import com.ja.ioniprog.model.dto.audit.ChangeDto;
 import com.ja.ioniprog.model.dto.PatientDoctorDto;
 import com.ja.ioniprog.model.dto.PatientDto;
+import com.ja.ioniprog.model.dto.audit.PatientAuditDto;
 import com.ja.ioniprog.model.entity.Patient;
 import com.ja.ioniprog.model.entity.PatientDoctor;
 import com.ja.ioniprog.model.entity.User;
@@ -29,6 +30,8 @@ import javax.validation.Valid;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -159,5 +162,41 @@ public class PatientService {
             logger.info("Update failed because entity was already modified!");
             throw new OptimisticLockException("Update failed because entity was already modified!");
         }
+    }
+
+    @IsDoctor
+    public List<PatientAuditDto> getAuditByIdPatient(String idPatient) {
+        List<PatientAuditDto> auditDto = new LinkedList<>();
+        List<PatientAudit> audit = patientAuditDao.getAuditByIdPatient(Integer.parseInt(idPatient));
+        if (null != audit) {
+            auditDto = audit.stream()
+                            .map(patientAudit -> dozerMapper.map(patientAudit, PatientAuditDto.class))
+                            .collect(Collectors.toList());
+        }
+
+        return auditDto;
+    }
+
+    @IsDoctor
+    public List<PatientDoctorDto> getPatientDoctors(PatientParams patientParams) {
+        List<PatientDoctorDto> dtos = new LinkedList<>();
+        List<PatientDoctor> patientDoctors = patientDoctorDao.getPatientDoctors(patientParams);
+
+        dtos = patientDoctors.stream()
+                            .map(patientDoctor -> dozerMapper.map(patientDoctor, PatientDoctorDto.class))
+                            .collect(Collectors.toList());
+
+        if (patientParams.isOrderByPatient()) {
+            dtos = dtos.stream()
+                        .sorted(Comparator.comparing(patientDoctorDto -> patientDoctorDto.getPatientDto().getLastName().toLowerCase()))
+                        .collect(Collectors.toList());
+        }
+        else if (patientParams.isOrderByDoctor()) {
+            dtos = dtos.stream()
+                    .sorted(Comparator.comparing(patientDoctorDto -> patientDoctorDto.getDoctorDto().getLastName()))
+                    .collect(Collectors.toList());
+        }
+
+        return dtos;
     }
 }

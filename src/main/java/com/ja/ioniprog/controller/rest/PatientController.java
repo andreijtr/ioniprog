@@ -5,6 +5,7 @@ import com.ja.ioniprog.exception.NoChangeDetectedException;
 import com.ja.ioniprog.model.dto.PatientDoctorDto;
 import com.ja.ioniprog.model.dto.PatientDto;
 import com.ja.ioniprog.model.dto.UserDto;
+import com.ja.ioniprog.model.dto.audit.PatientAuditDto;
 import com.ja.ioniprog.model.paging.PageResult;
 import com.ja.ioniprog.model.params.PatientParams;
 import com.ja.ioniprog.service.PatientDoctorService;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.persistence.OptimisticLockException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/patient")
@@ -33,12 +35,23 @@ public class PatientController {
         this.patientDoctorService = patientDoctorService;
     }
 
-    @GetMapping(value = "/get")
-    public ResponseEntity<PatientDto> getPatientById(String idPatient) {
-        logger.info("PatientController: get patient by id");
-        PatientDto patientDto = patientService.getById(idPatient);
+//    @GetMapping(value = "/get")
+//    public ResponseEntity<PatientDto> getPatientById(String idPatient) {
+//        logger.info("PatientController: get patient by id");
+//        PatientDto patientDto = patientService.getById(idPatient);
+//
+//        return new ResponseEntity<>(patientDto, HttpStatus.OK);
+//    }
+    @PostMapping(value = "/get", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<PatientDoctorDto> getPatientDoctors(@RequestBody PatientParams patientParams) {
+        logger.info("PatientController: get patientDoctors by params");
+        return patientService.getPatientDoctors(patientParams);
+    }
 
-        return new ResponseEntity<>(patientDto, HttpStatus.OK);
+    @GetMapping(value = "/audit", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<PatientAuditDto> getAuditByIdPatient(String idPatient) {
+        logger.info("PatientController: get audit for idPatient " + idPatient);
+        return patientService.getAuditByIdPatient(idPatient);
     }
 
     @PostMapping(value = "/paging", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

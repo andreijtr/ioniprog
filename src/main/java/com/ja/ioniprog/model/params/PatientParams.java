@@ -9,15 +9,20 @@ import lombok.NoArgsConstructor;
 
 @Data @Builder @AllArgsConstructor @NoArgsConstructor
 public class PatientParams {
+    private String idPatient;
+    private String idDoctor;
     private String firstName;
     private String lastName;
     private String phone;
-    private UserDto createdBy;
-    private UserDto doctor;
     private String globalSearch;
     private String state;
 
+    private UserDto createdBy;
+    private UserDto doctor;
     private UserDto loggedUser;
+
+    private boolean orderByPatient;
+    private boolean orderByDoctor;
 
     private int offset;
     private int pageSize;

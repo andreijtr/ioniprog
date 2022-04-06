@@ -69,7 +69,7 @@
         </div><!-- /.container-fluid -->
     </section>
 
-    <section class="content">
+    <section class="content" id="patientSection">
         <div class="container-fluid">
             <div class="row">
                 <div class="col" style="width: 100%; margin-bottom: 1em;">
@@ -90,10 +90,51 @@
                         <div class="row" id="patientCardsRow">
                         </div>
                         <div class="row">
-                            <div class="col-md-3" id="pagingButtonsCol">
+                            <div class="col-md-3" id="pagingButtonsCol" style="padding-bottom: 20px;">
                             </div>
                         </div>
                     </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="content" id="infoSection" style="display: none;">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col">
+                    <h4 id="titleInfoSection">Informatii pentru pacientul </h4>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="panel panel-default" id="infoPatientsPanel" style="width: 100%;">
+                        <ul class="nav nav-tabs">
+                            <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#auditContent">Istoric</a></li>
+                            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#doctorContent">Doctori</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div id="auditContent" class="tab-pane fade in active show">
+                                <div class="row" style="padding-top: 15px;">
+                                    <div class="col-md-12">
+                                        <div class="timeline" id="timelinePatient">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="doctorContent" class="tab-pane fade">
+                                <div class="row" style="padding-top: 15px;">
+                                    <div id="infoPatientDoctors" class="col-md-6">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col" style="padding-bottom: 20px;">
+                    <button id="backToPatientPanelBtn" type="button" class="btn btn-primary btn-sm">Inapoi</button>
                 </div>
             </div>
         </div>
