@@ -423,8 +423,8 @@
 
     // INFO SECTION
     function showSection(show, hide) {
-        $('#' + hide).slideUp(function() {
-            $('#' + show).slideDown();
+        $('#' + hide).slideUp(600, function() {
+            $('#' + show).slideDown(600);
         })
     }
 
@@ -642,14 +642,14 @@
             if (data[i].state == STATE.ACTIVE) {
                 callout.classList.add('callout', 'callout-success');
                 badge.classList.add('badge', 'badge-success');
+                badge.innerText = 'Activ';
                 paragraph.appendChild(badge);
-                paragraph.innerText = 'Activ';
             }
             else if (data[i].state == STATE.DELETED) {
                 callout.classList.add('callout', 'callout-danger');
                 badge.classList.add('badge', 'badge-danger');
+                badge.innerText = 'Sters';
                 paragraph.appendChild(badge);
-                paragraph.innerText = 'Sters';
             }
             callout.appendChild(h5);
             callout.appendChild(paragraph);
