@@ -3,7 +3,10 @@ package com.ja.ioniprog.service;
 import com.ja.ioniprog.config.security.annotations.IsDoctor;
 import com.ja.ioniprog.dao.PatientDoctorDao;
 import com.ja.ioniprog.exception.IllegalOperationException;
+import com.ja.ioniprog.model.dto.PatientDoctorDto;
+import com.ja.ioniprog.model.entity.Patient;
 import com.ja.ioniprog.model.entity.PatientDoctor;
+import com.ja.ioniprog.model.entity.User;
 import com.ja.ioniprog.model.params.PatientParams;
 import com.ja.ioniprog.utils.enums.StateEnum;
 import org.slf4j.Logger;
@@ -21,6 +24,25 @@ public class PatientDoctorService {
 
     public PatientDoctorService(PatientDoctorDao patientDoctorDao) {
         this.patientDoctorDao = patientDoctorDao;
+    }
+
+    @Transactional
+    @IsDoctor
+    public void add(PatientDoctorDto patientDoctorDto) {
+        PatientParams patientParams = PatientParams.builder()
+                                                    .idPatient(patientDoctorDto.getPatientDto().getIdPatient())
+                                                    .idDoctor(patientDoctorDto.getDoctorDto().getIdUser())
+                                                    .state(StateEnum.ACTIVE.getName())
+                                                    .build();
+        if (patientDoctorDao.getPatientDoctors(patientParams).isEmpty()) {
+            Patient patient = Patient.builder().id(Integer.parseInt(patientDoctorDto.getPatientDto().getIdPatient())).build();
+            User doctor = User.builder().id(Integer.parseInt(patientDoctorDto.getDoctorDto().getIdUser())).build();
+            User createdBy = User.builder().id(Integer.parseInt(patientDoctorDto.getCreatedBy().getIdUser())).build();
+            PatientDoctor pd = PatientDoctor.createPatientDoctor(patient, doctor, createdBy);
+            patientDoctorDao.save(pd);
+        } else {
+            throw new IllegalOperationException("The doctor already has this patient!");
+        }
     }
 
     /**

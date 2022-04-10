@@ -2,9 +2,11 @@ package com.ja.ioniprog.service;
 
 import com.ja.ioniprog.config.security.annotations.IsDoctor;
 import com.ja.ioniprog.dao.PatientDao;
+import com.ja.ioniprog.dao.UserDao;
 import com.ja.ioniprog.dao.audit.PatientAuditDao;
 import com.ja.ioniprog.dao.PatientDoctorDao;
 import com.ja.ioniprog.exception.NoChangeDetectedException;
+import com.ja.ioniprog.model.dto.UserShortDto;
 import com.ja.ioniprog.model.dto.audit.ChangeDto;
 import com.ja.ioniprog.model.dto.PatientDoctorDto;
 import com.ja.ioniprog.model.dto.PatientDto;
@@ -16,9 +18,11 @@ import com.ja.ioniprog.model.entity.audit.Audit;
 import com.ja.ioniprog.model.entity.audit.PatientAudit;
 import com.ja.ioniprog.model.paging.PageResult;
 import com.ja.ioniprog.model.params.PatientParams;
+import com.ja.ioniprog.model.params.UserParams;
 import com.ja.ioniprog.utils.application.JsonParser;
 import com.ja.ioniprog.utils.enums.ApplicationEnum;
 import com.ja.ioniprog.utils.enums.AuditEnum;
+import com.ja.ioniprog.utils.enums.RoleEnum;
 import org.dozer.Mapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,15 +47,17 @@ public class PatientService {
     private PatientDao       patientDao;
     private PatientAuditDao  patientAuditDao;
     private PatientDoctorDao patientDoctorDao;
+    private UserDao          userDao;
     private JsonParser       jsonParser;
     private Mapper           dozerMapper;
 
-    public PatientService(PatientDao patientDao, PatientAuditDao patientAuditDao, PatientDoctorDao patientDoctorDao, JsonParser jsonParser, Mapper dozerMapper) {
-        this.patientDao       = patientDao;
-        this.patientAuditDao  = patientAuditDao;
+    public PatientService(PatientDao patientDao, PatientAuditDao patientAuditDao, PatientDoctorDao patientDoctorDao, UserDao userDao, JsonParser jsonParser, Mapper dozerMapper) {
+        this.patientDao = patientDao;
+        this.patientAuditDao = patientAuditDao;
         this.patientDoctorDao = patientDoctorDao;
-        this.jsonParser       = jsonParser;
-        this.dozerMapper      = dozerMapper;
+        this.userDao = userDao;
+        this.jsonParser = jsonParser;
+        this.dozerMapper = dozerMapper;
     }
 
     public PatientDto getById(String idPatient) {
@@ -198,5 +204,14 @@ public class PatientService {
         }
 
         return dtos;
+    }
+
+    @IsDoctor
+    public List<UserShortDto> getLovDoctors() {
+        List<User> users = userDao.getUsers(UserParams.builder().expired("0").build());
+        return users.stream()
+                    .filter(user -> user.hasRole(RoleEnum.DOCTOR))
+                    .map(user -> new UserShortDto(String.valueOf(user.getId()), user.getFirstName(), user.getLastName(), user.getPhone(), user.getUsername()))
+                    .collect(Collectors.toList());
     }
 }

@@ -19,6 +19,11 @@
     initPage();
     bindChangeEventOnPageSizeSelect();
 
+    // transfer
+    loadDoctorsAjax();
+    bindClickEventOnCloseTransferPatient();
+    const validatorTransferPatient = validateTransferPatientForm();
+
     // MODAL ADD|EDIT PATIENT
     function bindClickEventOnAddPatientButton() {
         $('#addPatient').on('click', function() {
@@ -336,6 +341,7 @@
             bindClickEventPagingButtons();
             bindClickEventEditButton();
             bindClickEventOnDeleteButton();
+            bindClickEventOnTransferButton();
             bindClickEventOnInfoButton();
             bindClickEventOnBackToPatientPanelBtn();
         }).fail(function( jqXHR, textStatus, errorThrown ) {
@@ -418,6 +424,85 @@
             showErrorMessage(jqXHR.responseText);
             const patientParams = getPatientsPagingParams(STATE.ACTIVE);
             loadPatients(patientParams);
+        })
+    }
+
+    // TRANSFER
+    function bindClickEventOnTransferButton() {
+        document.querySelectorAll('.transferPatient').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                const stringPatientDoctor = $(btn).siblings('input').val();
+                const patientDoctor = JSON.parse(stringPatientDoctor);
+                document.getElementById('titleModalTransferPacient').innerHTML = `Transfera pacientul ${patientDoctor.patientDto.lastName} ${patientDoctor.patientDto.firstName} `;
+                $('#idPatientInput').val(patientDoctor.patientDto.idPatient);
+                $('#modalTransferPatient').modal('show');
+            })
+        })
+    }
+
+    function bindClickEventOnCloseTransferPatient() {
+        document.querySelector('.closeModalTransfer').addEventListener('click', function() {
+            $('#modalTransferPatient').modal('hide');
+            $('#selectDoctorTransfer').val('');
+            validatorTransferPatient.resetForm();
+        })
+    }
+
+    function loadDoctorsAjax() {
+        $.ajax({
+            url: "/patient/lov/users",
+            type: 'GET',
+            contentType : "application/json",
+        }).done(function(data) {
+            $('#selectDoctorTransfer').empty();
+            $('#selectDoctorTransfer').append('<option selected value="">Alegeti</option>');
+            for (let i = 0; i < data.length; i++) {
+                $('#selectDoctorTransfer').append('<option value=' + data[i].idUser + '>Dr. ' + data[i].lastName + ' ' + data[i].firstName + '</option>');
+            }
+            //$('#selectDoctorTransfer').selectPicker('refresh');
+        }).fail(function( jqXHR, textStatus, errorThrown ) {
+            showErrorMessage(jqXHR.responseText);
+        })
+    }
+
+    function validateTransferPatientForm() {
+        const validator = $('#formTransferPatient').validate({
+            rules: {
+                selectDoctorTransfer: 'required'
+            },
+            messages: {
+                selectDoctorTransfer: 'Selectati un doctor'
+            },
+            submitHandler: function(form, event) {
+                event.preventDefault();
+                let patientDoctor = {
+                    'patientDto' : {
+                        'idPatient' : $('#idPatientInput').val()
+                    },
+                    'doctorDto' : {
+                        'idUser' : $('#selectDoctorTransfer').val()
+                    }
+                };
+                transferPatientAjax(patientDoctor);
+                $('#modalTransferPatient').modal('hide');
+                $('#idPatientInput').val('');
+                $('#selectDoctorTransfer').val('');
+                validatorTransferPatient.resetForm();
+            }
+        });
+        return validator;
+    }
+
+    function transferPatientAjax(patientDoctor) {
+        $.ajax({
+            url: "/patient/transfer",
+            type: 'POST',
+            contentType : "application/json",
+            data : JSON.stringify(patientDoctor)
+        }).done(function(data) {
+            showSuccessMessage("Pacient a fost transferat cu succes. In sectiunea Info a pacientului gasiti toti medicii lui.");
+        }).fail(function( jqXHR, textStatus, errorThrown ) {
+            showErrorMessage(jqXHR.responseText);
         })
     }
 

@@ -5,6 +5,7 @@ import com.ja.ioniprog.exception.NoChangeDetectedException;
 import com.ja.ioniprog.model.dto.PatientDoctorDto;
 import com.ja.ioniprog.model.dto.PatientDto;
 import com.ja.ioniprog.model.dto.UserDto;
+import com.ja.ioniprog.model.dto.UserShortDto;
 import com.ja.ioniprog.model.dto.audit.PatientAuditDto;
 import com.ja.ioniprog.model.paging.PageResult;
 import com.ja.ioniprog.model.params.PatientParams;
@@ -95,5 +96,25 @@ public class PatientController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/transfer", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> transferPatient(@RequestBody PatientDoctorDto patientDoctorDto, HttpServletRequest request) {
+        try {
+            UserDto userConnected = LoggedUser.get(request);
+            patientDoctorDto.setCreatedBy(UserShortDto.builder().idUser(userConnected.getIdUser()).build());
+            patientDoctorService.add(patientDoctorDto);
+        } catch (IllegalOperationException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Operation failed, because error occurred. Contact administrator.", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>("SUCCESS!", HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/lov/users")
+    public List<UserShortDto> getLovDoctors() {
+        return patientService.getLovDoctors();
     }
 }
