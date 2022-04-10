@@ -53,6 +53,29 @@
     </div>
     <!-- /.modal add/edit patient-->
 
+    <!--  Modal transfer patient  -->
+    <div class="modal fade" id="modalTransferPatient">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="titleModalTransferPacient">Transfer pacient</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="formTransferPatient">
+                        <input type="hidden" id="idPatientToTransfer">
+                        <div class="form-group">
+                            <label for="selectDoctorTransfer">Medic</label>
+                            <select id="selectDoctorTransfer" name="selectDoctorTransfer" class="form-select"></select>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm">Transfera</button>
+                        <button type="button" class="btn btn-danger btn-sm closeModalTransfer">Renunta</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.modal transfer patient-->
+
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">

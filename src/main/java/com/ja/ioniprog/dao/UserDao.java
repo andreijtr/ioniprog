@@ -39,7 +39,7 @@ public class UserDao {
             TypedQuery<User> query = entityManager.createQuery(GET_USERS, User.class)
                     .setParameter("id", userParam.getId())
                     .setParameter("username", userParam.getUsername())
-                    .setParameter("expired", userParam.getExpired());
+                    .setParameter("expired", userParam.getExpired() != null ? Integer.parseInt(userParam.getExpired()) : null);
             users = query.getResultList();
         }
 

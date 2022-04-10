@@ -1,5 +1,6 @@
 package com.ja.ioniprog.model.entity;
 
+import com.ja.ioniprog.utils.enums.RoleEnum;
 import lombok.*;
 import org.hibernate.annotations.SelectBeforeUpdate;
 
@@ -90,5 +91,14 @@ public class User {
                 ", notExpired=" + expired +
                 ", loginAttemptsRemaining=" + loginAttemptsRemaining +
                 '}';
+    }
+
+    public boolean hasRole(RoleEnum roleEnum) {
+        for (UserRole role : roles) {
+            if (role.getRole().getName().equals(roleEnum.getName())) {
+                return true;
+            }
+        }
+        return false;
     }
 }
