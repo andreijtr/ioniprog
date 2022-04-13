@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Title</title>
+</head>
+<body>
+<div th:fragment="location" class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Cabinete</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="/dashboard.html">Home</a></li>
+                        <li class="breadcrumb-item active">Cabinete</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content" id="locationSection">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col" style="width: 100%">
+                    <div class="panel panel-default" id="locationsPanel" style="width: 100%;">
+                        <div class="row">
+                            <div class="col-md-6" id="locationCardsRow">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script th:src="@{~/script/javascript/location.js}"></script>
+</div>
+
+</body>
+</html>

@@ -38,4 +38,9 @@ public class ViewController {
     public String getPatientPage() {
         return "/fragments/patient :: patient";
     }
+
+    @GetMapping("/location")
+    public String getLocationPage() {
+        return "/fragments/location :: location";
+    }
 }
