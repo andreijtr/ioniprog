@@ -1,18 +1,14 @@
 package com.ja.ioniprog.config.mapping;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ja.ioniprog.config.mapping.converters.ChangesCustomConverter;
 import com.ja.ioniprog.config.mapping.converters.LocalDateCustomConverter;
 import com.ja.ioniprog.config.mapping.converters.LocalDateTimeCustomConverter;
-import com.ja.ioniprog.model.dto.UserShortDto;
-import com.ja.ioniprog.model.dto.PatientDoctorDto;
-import com.ja.ioniprog.model.dto.PatientDto;
-import com.ja.ioniprog.model.dto.UserDto;
+import com.ja.ioniprog.dao.UserLocationDao;
+import com.ja.ioniprog.model.dto.*;
 import com.ja.ioniprog.model.dto.audit.AuditDto;
 import com.ja.ioniprog.model.dto.audit.PatientAuditDto;
-import com.ja.ioniprog.model.entity.Patient;
-import com.ja.ioniprog.model.entity.PatientDoctor;
-import com.ja.ioniprog.model.entity.User;
+import com.ja.ioniprog.model.dto.audit.UserLocationDto;
+import com.ja.ioniprog.model.entity.*;
 import com.ja.ioniprog.model.entity.audit.Audit;
 import com.ja.ioniprog.model.entity.audit.PatientAudit;
 import org.dozer.CustomConverter;
@@ -35,6 +31,8 @@ public class DozerConfig {
         dozerBeanMapper.addMapping(patientDoctorToPatientDoctorDtoMapping());
         dozerBeanMapper.addMapping(patientAuditToPatientAuditDtoMapping());
         dozerBeanMapper.addMapping(auditToAuditDtoMapping());
+        dozerBeanMapper.addMapping(locationToLocationDtoMapping());
+        dozerBeanMapper.addMapping(userLocationToUserLocationDtoMapping());
 
         return dozerBeanMapper;
     }
@@ -104,6 +102,7 @@ public class DozerConfig {
             }
         };
     }
+
     @Bean
     public BeanMappingBuilder auditToAuditDtoMapping() {
         return new BeanMappingBuilder() {
@@ -113,6 +112,33 @@ public class DozerConfig {
                         .fields("createdOn", "createdOn", FieldsMappingOptions.customConverter(LocalDateTimeCustomConverter.class))
                         .fields("changes", "changes", FieldsMappingOptions.customConverter(ChangesCustomConverter.class))
                         .exclude("entityVersion");
+            }
+        };
+    }
+
+    @Bean
+    public BeanMappingBuilder locationToLocationDtoMapping() {
+        return new BeanMappingBuilder() {
+            @Override
+            protected void configure() {
+                mapping(Location.class, LocationDto.class)
+                        .fields("id", "idLocation")
+                        .fields("userResponsible", "userDto" );
+            }
+        };
+    }
+
+    @Bean
+    public BeanMappingBuilder userLocationToUserLocationDtoMapping() {
+        return new BeanMappingBuilder() {
+            @Override
+            protected void configure() {
+                mapping(UserLocation.class, UserLocationDto.class)
+                        .fields("id", "idUserLocation")
+                        .fields("user", "doctorDto")
+                        .fields("location", "locationDto")
+                        .fields("assignmentDate", "assignmentDate", FieldsMappingOptions.customConverter(LocalDateTimeCustomConverter.class))
+                        .fields("retreatDate", "retreatDate", FieldsMappingOptions.customConverter(LocalDateTimeCustomConverter.class));
             }
         };
     }

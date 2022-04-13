@@ -1,11 +1,10 @@
-package com.ja.ioniprog.model.dto;
+package com.ja.ioniprog.model.params;
 
 import lombok.*;
 
 @Getter @Setter @ToString @NoArgsConstructor @AllArgsConstructor @Builder
-public class LocationDto {
+public class LocationParams {
+    private String idDoctor;
     private String idLocation;
-    private String name;
-    private UserShortDto userDto;
     private String state;
 }
