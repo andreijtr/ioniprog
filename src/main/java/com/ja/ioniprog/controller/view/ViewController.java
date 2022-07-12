@@ -43,4 +43,9 @@ public class ViewController {
     public String getLocationPage() {
         return "/fragments/location :: location";
     }
+
+    @GetMapping("/appointment")
+    public String getAppointmentPage() {
+        return "/fragments/appointment :: appointment";
+    }
 }
